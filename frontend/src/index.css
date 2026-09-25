@@ -1,0 +1,284 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root,
+[data-kontras="gelap"] {
+  --bg-primary: #0d1117;
+  --bg-secondary: #161b22;
+  --bg-elevated: #21262d;
+  --bg-overlay: rgba(13, 17, 23, 0.85);
+
+  --text-primary: #f0f6fc;
+  --text-secondary: #8b949e;
+  /* Dinaikkan dari #6e7681: di atas --bg-secondary (kartu berita) nilai lama
+     cuma ~3.7:1, di bawah ambang WCAG AA 4.5:1 — Lighthouse menandai tanggal
+     terbit tiap kartu, subtitle logo, dan baris footer. #868f99 memberi
+     ~5.2:1 di kartu, ~5.8:1 di latar utama, dan ~4.6:1 di --bg-elevated.
+     Jaraknya ke --text-secondary jadi tipis; itu konsekuensi yang diterima,
+     karena tertiary dipakai untuk teks sungguhan (tanggal, keterangan),
+     bukan sekadar hiasan. */
+  --text-tertiary: #868f99;
+
+  --accent: #d65a3a;
+  --accent-hover: #e87355;
+  --accent-muted: rgba(214, 90, 58, 0.15);
+  /* Warna teks/ikon yang duduk DI ATAS latar --accent dan --danger. Harus
+     ikut berganti per tema: aksen versi terang jauh lebih gelap, jadi teks
+     gelap di atasnya tidak akan terbaca. */
+  --on-accent: #0d1117;
+  --on-danger: #ffffff;
+
+  --border-subtle: #30363d;
+  --border-emphasis: #484f58;
+  --border-accent: #d65a3a;
+
+  --success: #3fb950;
+  --danger: #f85149;
+  --warning: #d29922;
+  --info: #58a6ff;
+
+  --card-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 8px 24px rgba(0, 0, 0, 0.28);
+  --card-shadow-hover: 0 4px 10px rgba(0, 0, 0, 0.4), 0 18px 40px rgba(0, 0, 0, 0.45);
+  --image-scrim: linear-gradient(to top, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.05) 55%);
+}
+
+/* Mode "Terang" (nilai tersimpan: 'normal'). Bukan sekadar warna dibalik:
+   --accent terracotta #d65a3a cuma mencapai ~3.8:1 di atas putih — kurang
+   untuk teks — jadi di sini digelapkan ke #b8442a (~5.4:1) supaya identitas
+   warnanya tetap sama tapi tetap terbaca. Bayangan kartu ikut diperlembut
+   karena bayangan hitam pekat versi gelap terlihat kotor di latar putih. */
+[data-kontras="terang"] {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f4f6f8;
+  --bg-elevated: #e9edf1;
+  --bg-overlay: rgba(255, 255, 255, 0.88);
+
+  --text-primary: #14181d;
+  --text-secondary: #4a5560;
+  /* Digelapkan dari #667080 dengan alasan yang sama seperti versi gelap:
+     nilai lama cuma ~4.3:1 di atas --bg-elevated. #5f6977 mencapai ~4.8:1
+     di sana dan ~5.6:1 di atas putih. */
+  --text-tertiary: #5f6977;
+
+  --accent: #b8442a;
+  --accent-hover: #9c3721;
+  --accent-muted: rgba(184, 68, 42, 0.10);
+  --on-accent: #ffffff;
+  --on-danger: #ffffff;
+
+  --border-subtle: #d5dbe1;
+  --border-emphasis: #a8b2bd;
+  --border-accent: #b8442a;
+
+  --success: #1a7f37;
+  --danger: #cf222e;
+  --warning: #9a6700;
+  --info: #0969da;
+
+  --card-shadow: 0 1px 2px rgba(20, 24, 29, 0.06), 0 6px 18px rgba(20, 24, 29, 0.08);
+  --card-shadow-hover: 0 4px 10px rgba(20, 24, 29, 0.10), 0 16px 32px rgba(20, 24, 29, 0.14);
+  --image-scrim: linear-gradient(to top, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.02) 55%);
+}
+
+/* Mode "Tinggi". Teks utama #f0f6fc di atas #0d1117 sudah ~16.5:1, jadi
+   menaikkannya ke putih murni nyaris tak terasa — yang benar-benar membuat
+   beda justru token sekundernya: --text-secondary naik dari ~5.7:1 ke ~13:1
+   dan --border-subtle dari #30363d (praktis tak terlihat) jadi putih, supaya
+   tepi tiap kartu tegas. Nilai aksen #ffaa00 mengikuti yang sudah dipakai
+   ArticlePreview/ArticleDetailPage sebelumnya. */
+[data-kontras="tinggi"] {
+  --bg-primary: #000000;
+  --bg-secondary: #000000;
+  --bg-elevated: #1a1a1a;
+  --bg-overlay: rgba(0, 0, 0, 0.92);
+
+  --text-primary: #ffffff;
+  --text-secondary: #cccccc;
+  --text-tertiary: #aaaaaa;
+
+  --accent: #ffaa00;
+  --accent-hover: #ffc75a;
+  --accent-muted: rgba(255, 170, 0, 0.20);
+  --on-accent: #000000;
+  --on-danger: #000000;
+
+  --border-subtle: #ffffff;
+  --border-emphasis: #ffffff;
+  --border-accent: #ffaa00;
+
+  --success: #3ff060;
+  --danger: #ff6a60;
+  --warning: #ffd23f;
+  --info: #7ac0ff;
+
+  --card-shadow: none;
+  --card-shadow-hover: none;
+  --image-scrim: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.1) 55%);
+}
+
+:root {
+  --font-body: 'DM Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  /* Wordmark "aksa." tetap Inter: DM Sans yang dimuat hanya sampai bobot 700,
+     sedangkan logonya memakai extra-bold — kalau ikut diganti, bobotnya akan
+     dipalsukan browser dan logonya terlihat berbeda. */
+  --font-wordmark: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background-color: var(--bg-primary);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+#root {
+  background-color: var(--bg-primary);
+  min-height: 100vh;
+}
+
+::selection {
+  background-color: var(--accent);
+  color: var(--bg-primary);
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-subtle);
+  border-radius: 6px;
+  border: 3px solid var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-emphasis);
+}
+
+input:focus, textarea:focus, select:focus, button:focus {
+  outline: none;
+}
+
+input:focus-visible, textarea:focus-visible, select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInRight {
+  from { 
+    opacity: 0; 
+    transform: translateX(20px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateX(0); 
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-fade-in-delay-1 { animation: fadeIn 0.5s ease-out 0.1s forwards; opacity: 0; }
+.animate-fade-in-delay-2 { animation: fadeIn 0.5s ease-out 0.2s forwards; opacity: 0; }
+.animate-fade-in-delay-3 { animation: fadeIn 0.5s ease-out 0.3s forwards; opacity: 0; }
+.animate-fade-in-delay-4 { animation: fadeIn 0.5s ease-out 0.4s forwards; opacity: 0; }
+
+/* Kartu fitur aksesibilitas di footer bisa ditekan untuk membuka
+   keterangannya. Aturan global `button:focus { outline: none }` menghapus
+   penanda fokus keyboard, jadi dikembalikan khusus di sini — kartu ini justru
+   yang menjelaskan fitur aksesibilitas. */
+.kartu-fitur:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Zoom halus gambar saat disorot, khusus perangkat ber-mouse. Varian
+   group-hover milik Tailwind tidak ikut dibatasi oleh hoverOnlyWhenSupported,
+   padahal di layar sentuh transform-nya membuat lapisan render baru yang
+   lolos dari filter buta warna (warna berkedip ke aslinya saat disentuh). */
+@media (hover: hover) and (pointer: fine) {
+  .zoom-hover:hover img {
+    transform: scale(1.05);
+  }
+}
+
+/* Baris rekomendasi yang bisa digeser. Scrollbar-nya ditipiskan (aturan
+   global ::-webkit-scrollbar terlalu tebal untuk baris sependek ini) tapi
+   tetap ditampilkan sebagai penanda masih ada kartu di sebelahnya. */
+.slider-row::-webkit-scrollbar {
+  height: 6px;
+}
+
+.slider-row::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.slider-row::-webkit-scrollbar-thumb {
+  background: var(--border-subtle);
+  border: none;
+  border-radius: 3px;
+}
+
+.slider-row::-webkit-scrollbar-thumb:hover {
+  background: var(--border-emphasis);
+}
+
+/* Kartu daftar berita: permukaan terangkat + shadow yang ikut naik saat
+   hover, supaya tiap artikel terbaca sebagai satu kartu utuh. */
+.article-card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--card-shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+/* Efek angkat sengaja dibatasi ke perangkat ber-mouse. Di layar sentuh, iOS
+   menerapkan :hover saat kartu disentuh; transform membuat kartu jadi lapisan
+   render tersendiri yang lolos dari filter buta warna, sehingga warnanya
+   berkedip ke aslinya sesaat. */
+@media (hover: hover) and (pointer: fine) {
+  .article-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--border-emphasis);
+    box-shadow: var(--card-shadow-hover);
+  }
+}
+
+/* Di layar sentuh cukup garis tepinya yang menyala saat ditekan — tanpa
+   transform, jadi tidak ada lapisan baru yang dibuat. */
+@media not all and (hover: hover) {
+  .article-card:active {
+    border-color: var(--accent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .article-card { transition: none; }
+  .article-card:hover { transform: none; }
+}
+
+.font-body { font-family: var(--font-body); }
+.font-wordmark { font-family: var(--font-wordmark); }
