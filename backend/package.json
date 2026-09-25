@@ -31,7 +31,6 @@
     "pathe": "^2.0.3",
     "perfect-debounce": "^1.0.0",
     "pkg-types": "^2.3.0",
-    "prisma": "^6.19.3",
     "pure-rand": "^6.1.0",
     "rc9": "^2.1.2",
     "readdirp": "^4.1.2",
@@ -47,6 +46,7 @@
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
-    "nodemon": "^3.1.14"
+    "nodemon": "^3.1.14",
+    "prisma": "^6.19.3"
   }
 }

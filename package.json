@@ -1,0 +1,12 @@
+{
+  "name": "portal-berita-pwa",
+  "version": "1.0.0",
+  "description": "Portal Berita PWA dengan Visual Accessibility",
+  "scripts": {
+    "start": "cd backend && npm start",
+    "build": "cd backend && npm install && npx prisma generate"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
