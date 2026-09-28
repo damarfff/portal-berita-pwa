@@ -261,7 +261,7 @@ function HomePage() {
                     onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--accent-hover)'; }}
                     onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'var(--accent)'; }}
                   >
-                    Masuk untuk Baca
+                    Masuk untuk Coba
                   </button>
                 </div>
               </div>

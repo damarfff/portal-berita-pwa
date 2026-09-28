@@ -1,0 +1,59 @@
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Environment files (JANGAN COMMIT!)
+.env
+.env.local
+.env.production
+*/.env
+frontend/.env
+backend/.env
+*/.env.local
+*/.env.production
+
+# Build outputs
+dist/
+build/
+*/dist/
+*/build/
+
+# IDE dan editor
+.vscode/
+.idea/
+.claude/
+.cursor/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Backup dan draft
+.backup/
+backup/
+*.backup
+*.bak
+
+# Logs
+*.log
+npm-debug.log*
+yarn-error.log*
+yarn-debug.log*
+
+# Database lokal
+*.db
+*.sqlite
+*.sqlite3
+
+# Upload folder (jangan commit user uploads, tapi keep folder-nya)
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Prisma
+backend/prisma/migrations/dev.db*
+
+# Draft skripsi
+*.docx
+*.doc
+*.pdf
+*.pptx
