@@ -1,5 +1,15 @@
 let isSpeaking = false;
 let currentUtterance = null;
+const speechSubscribers = new Set();
+
+const emitSpeechEvent = (event) => {
+  speechSubscribers.forEach((subscriber) => subscriber(event));
+};
+
+export const subscribeSpeech = (subscriber) => {
+  speechSubscribers.add(subscriber);
+  return () => speechSubscribers.delete(subscriber);
+};
 
 export const isTTSSupported = () => {
   return 'speechSynthesis' in window;
@@ -21,12 +31,14 @@ export const speak = (text, options = {}) => {
 
   utterance.onstart = () => {
     isSpeaking = true;
+    emitSpeechEvent({ type: 'start', source: options.source });
     if (options.onStart) options.onStart();
   };
 
   utterance.onend = () => {
     isSpeaking = false;
     currentUtterance = null;
+    emitSpeechEvent({ type: 'end', source: options.source });
     if (options.onEnd) options.onEnd();
   };
 
@@ -40,6 +52,7 @@ export const speak = (text, options = {}) => {
   utterance.onerror = (event) => {
     isSpeaking = false;
     currentUtterance = null;
+    emitSpeechEvent({ type: 'error', source: options.source });
     console.error('TTS error:', event);
     if (options.onError) options.onError(event);
   };
@@ -50,6 +63,8 @@ export const speak = (text, options = {}) => {
 };
 
 export const stop = () => {
+  emitSpeechEvent({ type: 'stop' });
+
   // cancel() ikut memicu event "end" (dan di sebagian browser "error") pada
   // utterance yang sedang berjalan. Kalau handler-nya masih terpasang,
   // callback onEnd milik bacaan LAMA bisa menyala setelah bacaan BARU dimulai

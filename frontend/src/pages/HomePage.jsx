@@ -8,6 +8,7 @@ import ArticleCard from '../components/ArticleCard';
 import HeadlineCarousel from '../components/HeadlineCarousel';
 import { scrollKeSection, SECTION_ARTIKEL } from '../utils/scroll';
 import { useFilterWarna } from '../hooks/useFilterWarna';
+import ChevronLeftIcon from '../components/ChevronLeftIcon';
 
 const ARTICLES_PAGE_SIZE = 9;
 const REKOMENDASI_MAX = 10;
@@ -39,7 +40,7 @@ function HomePage() {
   // kalau dibungkus section ber-filter, di Chrome jadi tertumpuk dua kali.
   const filterWarna = useFilterWarna();
   const gayaFilter = { filter: filterWarna };
-  const { isLoggedIn, isUser } = useAuth();
+  const { isLoggedIn, isUser, isGuest } = useAuth();
 
   // Klik "Beranda" (Navbar/Footer) selalu menavigasi ke "/", dan App.jsx
   // memberi HomePage `key={location.key}` sehingga navigasi itu — bahkan
@@ -128,7 +129,7 @@ function HomePage() {
   };
 
   const handleArticleClick = (slug) => {
-    if (!isLoggedIn || !isUser) {
+    if (!isLoggedIn || (!isUser && !isGuest)) {
       navigate('/login');
       return;
     }
@@ -494,10 +495,10 @@ function HomePage() {
           </p>
           <button
             onClick={() => pilihKategori(null)}
-            className="mt-4 text-sm hover:underline"
+            className="mt-4 text-sm hover:underline inline-flex items-center gap-2"
             style={{ color: 'var(--accent)' }}
           >
-            ← Lihat semua artikel
+            <><ChevronLeftIcon /> Lihat semua artikel</>
           </button>
         </div>
       )}

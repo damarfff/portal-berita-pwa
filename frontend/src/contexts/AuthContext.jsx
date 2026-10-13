@@ -4,6 +4,8 @@ import {
   getCurrentUser, 
   getCurrentRole, 
   isAuthenticated, 
+  getVisitorUser,
+  isVisitorAuthenticated,
   logout as logoutService 
 } from '../services/authService';
 
@@ -12,6 +14,12 @@ const getInitialAuthState = () => {
     return {
       user: getCurrentUser(),
       role: getCurrentRole()
+    };
+  }
+  if (isVisitorAuthenticated()) {
+    return {
+      user: getVisitorUser(),
+      role: 'visitor'
     };
   }
   return { user: null, role: null };
@@ -39,6 +47,7 @@ export const AuthProvider = ({ children }) => {
     isLoggedIn: !!user,
     isAdmin: role === 'admin',
     isUser: role === 'user',
+    isGuest: role === 'visitor',
     login,
     logout
   };

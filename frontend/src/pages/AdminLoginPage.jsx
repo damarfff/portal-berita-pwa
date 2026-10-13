@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { loginAdmin } from '../services/authService';
 import { useAuth } from '../hooks/useAuth';
+import { buatPesanValidasi, hapusPesanValidasi } from '../utils/formValidation';
+import ChevronLeftIcon from '../components/ChevronLeftIcon';
 
 function AdminLoginPage() {
   const [username, setUsername] = useState('');
@@ -87,12 +89,14 @@ function AdminLoginPage() {
                 className="block text-xs uppercase tracking-widest font-medium mb-2"
                 style={{ color: 'var(--text-secondary)' }}
               >
-                Username
+                Nama Pengguna
               </label>
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
+                onInput={hapusPesanValidasi}
+                onInvalid={buatPesanValidasi({ wajib: 'Isi nama pengguna admin' })}
                 required
                 style={inputStyle}
                 className="w-full px-4 py-3 rounded-md transition"
@@ -105,12 +109,14 @@ function AdminLoginPage() {
                 className="block text-xs uppercase tracking-widest font-medium mb-2"
                 style={{ color: 'var(--text-secondary)' }}
               >
-                Password
+                Kata Sandi
               </label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                onInput={hapusPesanValidasi}
+                onInvalid={buatPesanValidasi({ wajib: 'Isi kata sandi admin' })}
                 required
                 style={inputStyle}
                 className="w-full px-4 py-3 rounded-md transition"
@@ -138,10 +144,10 @@ function AdminLoginPage() {
           >
             <Link 
               to="/login" 
-              className="text-xs uppercase tracking-widest transition hover:opacity-70"
+              className="text-xs uppercase tracking-widest transition hover:opacity-70 inline-flex items-center gap-2"
               style={{ color: 'var(--text-tertiary)' }}
             >
-              ← Kembali ke Login Pengguna
+              <><ChevronLeftIcon /> Kembali ke Login Pengguna</>
             </Link>
           </div>
         </div>

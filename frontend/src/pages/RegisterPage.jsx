@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { registerUser, loginUser } from '../services/authService';
 import { useAuth } from '../hooks/useAuth';
+import { buatPesanValidasi, hapusPesanValidasi } from '../utils/formValidation';
+import ChevronLeftIcon from '../components/ChevronLeftIcon';
 
 function RegisterPage() {
   const [nama, setNama] = useState('');
@@ -18,12 +20,12 @@ function RegisterPage() {
     setError('');
 
     if (password !== konfirmPassword) {
-      setError('Konfirmasi password tidak cocok');
+      setError('Konfirmasi kata sandi tidak cocok');
       return;
     }
 
     if (password.length < 6) {
-      setError('Password minimal 6 karakter');
+      setError('Kata sandi minimal 6 karakter');
       return;
     }
 
@@ -107,7 +109,7 @@ function RegisterPage() {
               className="text-sm transition hover:opacity-70 inline-flex items-center gap-2"
               style={{ color: 'var(--text-tertiary)' }}
             >
-              ← Kembali ke beranda
+              <><ChevronLeftIcon /> Kembali ke beranda</>
             </Link>
           </div>
 
@@ -151,6 +153,8 @@ function RegisterPage() {
                 type="text"
                 value={nama}
                 onChange={(e) => setNama(e.target.value)}
+                onInput={hapusPesanValidasi}
+                onInvalid={buatPesanValidasi({ wajib: 'Isi nama Anda' })}
                 required
                 style={inputStyle}
                 className="w-full px-4 py-3 rounded-md transition"
@@ -169,6 +173,11 @@ function RegisterPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                onInput={hapusPesanValidasi}
+                onInvalid={buatPesanValidasi({
+                  wajib: 'Isi email Anda',
+                  email: 'Masukkan alamat email yang valid'
+                })}
                 required
                 style={inputStyle}
                 className="w-full px-4 py-3 rounded-md transition"
@@ -181,12 +190,18 @@ function RegisterPage() {
                 className="block text-xs uppercase tracking-widest font-medium mb-2"
                 style={{ color: 'var(--text-secondary)' }}
               >
-                Password
+                Kata Sandi
               </label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                onInput={hapusPesanValidasi}
+                onInvalid={buatPesanValidasi({
+                  wajib: 'Isi kata sandi Anda',
+                  terlaluPendek: 'Kata sandi minimal 6 karakter'
+                })}
+                minLength={6}
                 required
                 style={inputStyle}
                 className="w-full px-4 py-3 rounded-md transition"
@@ -199,16 +214,18 @@ function RegisterPage() {
                 className="block text-xs uppercase tracking-widest font-medium mb-2"
                 style={{ color: 'var(--text-secondary)' }}
               >
-                Konfirmasi Password
+                Konfirmasi Kata Sandi
               </label>
               <input
                 type="password"
                 value={konfirmPassword}
                 onChange={(e) => setKonfirmPassword(e.target.value)}
+                onInput={hapusPesanValidasi}
+                onInvalid={buatPesanValidasi({ wajib: 'Konfirmasi kata sandi Anda' })}
                 required
                 style={inputStyle}
                 className="w-full px-4 py-3 rounded-md transition"
-                placeholder="Ulangi password"
+                placeholder="Ulangi kata sandi"
               />
             </div>
 

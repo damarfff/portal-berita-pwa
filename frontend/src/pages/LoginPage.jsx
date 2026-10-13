@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { loginUser } from '../services/authService';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { loginUser, loginAsVisitor } from '../services/authService';
 import { useAuth } from '../hooks/useAuth';
+import { buatPesanValidasi, hapusPesanValidasi } from '../utils/formValidation';
+import ChevronLeftIcon from '../components/ChevronLeftIcon';
 
 function LoginPage() {
   const [email, setEmail] = useState('');
@@ -9,7 +11,14 @@ function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useAuth();
+
+  const handleVisitorLogin = () => {
+    const visitor = loginAsVisitor();
+    login(visitor, 'visitor');
+    navigate('/setup-preferences');
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -96,7 +105,7 @@ function LoginPage() {
               className="text-sm transition hover:opacity-70 inline-flex items-center gap-2"
               style={{ color: 'var(--text-tertiary)' }}
             >
-              ← Kembali ke beranda
+              <><ChevronLeftIcon /> Kembali ke beranda</>
             </Link>
           </div>
 
@@ -114,6 +123,19 @@ function LoginPage() {
               Lanjutkan membaca dengan preferensi tersimpan
             </p>
           </div>
+
+          {location.state?.message && (
+            <div
+              className="p-4 rounded-lg mb-6 text-sm"
+              style={{
+                backgroundColor: 'rgba(46, 160, 67, 0.1)',
+                border: '1px solid rgba(46, 160, 67, 0.3)',
+                color: 'var(--success)'
+              }}
+            >
+              {location.state.message}
+            </div>
+          )}
 
           {error && (
             <div 
@@ -140,6 +162,11 @@ function LoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                onInput={hapusPesanValidasi}
+                onInvalid={buatPesanValidasi({
+                  wajib: 'Isi email Anda',
+                  email: 'Masukkan alamat email yang valid'
+                })}
                 required
                 style={inputStyle}
                 className="w-full px-4 py-3 rounded-md transition focus:border-accent"
@@ -152,17 +179,28 @@ function LoginPage() {
                 className="block text-xs uppercase tracking-widest font-medium mb-2"
                 style={{ color: 'var(--text-secondary)' }}
               >
-                Password
+                Kata Sandi
               </label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                onInput={hapusPesanValidasi}
+                onInvalid={buatPesanValidasi({ wajib: 'Isi kata sandi Anda' })}
                 required
                 style={inputStyle}
                 className="w-full px-4 py-3 rounded-md transition"
                 placeholder="Minimal 6 karakter"
               />
+              <div className="text-right mt-2">
+                <Link
+                  to="/reset-password"
+                  className="text-xs transition hover:underline"
+                  style={{ color: 'var(--accent)' }}
+                >
+                  Lupa kata sandi?
+                </Link>
+              </div>
             </div>
 
             <button
@@ -195,18 +233,25 @@ function LoginPage() {
               </Link>
             </p>
 
-            <div 
+            <div
               className="pt-6"
               style={{ borderTop: '1px solid var(--border-subtle)' }}
             >
-              <Link 
-                to="/admin/login" 
-                className="text-xs uppercase tracking-widest transition hover:opacity-70"
-                style={{ color: 'var(--text-tertiary)' }}
+              <button
+                type="button"
+                onClick={handleVisitorLogin}
+                className="inline-flex px-4 py-2 rounded-md text-xs uppercase tracking-widest font-medium transition"
+                style={{
+                  backgroundColor: 'var(--accent)',
+                  color: 'var(--bg-primary)'
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--accent-hover)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'var(--accent)'; }}
               >
-                - Masuk sebagai Admin -
-              </Link>
+                Masuk sebagai Pengunjung
+              </button>
             </div>
+
           </div>
         </div>
       </div>

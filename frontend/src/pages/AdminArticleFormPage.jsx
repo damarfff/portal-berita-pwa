@@ -7,6 +7,7 @@ import {
 } from '../services/adminService';
 import { getCategories } from '../services/articleService';
 import AdminLayout from '../components/AdminLayout';
+import ChevronLeftIcon from '../components/ChevronLeftIcon';
 
 function AdminArticleFormPage() {
   const { id } = useParams();
@@ -204,16 +205,16 @@ function AdminArticleFormPage() {
         <div className="mb-10 animate-fade-in">
           <Link 
             to="/admin/articles" 
-            className="text-sm transition hover:underline mb-4 inline-block"
+            className="text-sm transition hover:underline mb-4 inline-flex items-center gap-2"
             style={{ color: 'var(--accent)' }}
           >
-            ← Kembali ke Daftar Artikel
+            <><ChevronLeftIcon /> Kembali ke Daftar Artikel</>
           </Link>
           <h1 
  className="font-bold tracking-tight text-4xl"
             style={{ color: 'var(--text-primary)' }}
           >
-            {isEditMode ? 'Edit Artikel' : 'Tulis Artikel Baru'}
+            {isEditMode ? 'Ubah Artikel' : 'Tulis Artikel Baru'}
           </h1>
           {isEditMode && originalStatus && (
             <span 
@@ -227,7 +228,7 @@ function AdminArticleFormPage() {
                   : 'var(--warning)'
               }}
             >
-              Status: {originalStatus === 'published' ? 'Published' : 'Draft'}
+              Status: {originalStatus === 'published' ? 'Diterbitkan' : 'Draf'}
             </span>
           )}
         </div>
@@ -296,7 +297,7 @@ function AdminArticleFormPage() {
               className="block text-xs uppercase tracking-widest font-medium mb-2"
               style={labelStyle}
             >
-              Nama Publisher
+              Nama Penerbit
             </label>
             <input
               type="text"
@@ -328,7 +329,7 @@ function AdminArticleFormPage() {
                   className="text-xs mb-2"
                   style={{ color: 'var(--text-tertiary)' }}
                 >
-                  Thumbnail saat ini:
+                  Gambar mini saat ini:
                 </p>
                 <div 
                   className="rounded-md overflow-hidden mb-2"
@@ -336,7 +337,7 @@ function AdminArticleFormPage() {
                 >
                   <img 
                     src={fullThumbnailUrl} 
-                    alt="Existing thumbnail"
+                    alt="Gambar mini saat ini"
                     className="w-full max-h-48 object-cover"
                   />
                 </div>
@@ -367,7 +368,7 @@ function AdminArticleFormPage() {
                   fontWeight: thumbnailMode === 'file' ? 500 : 400
                 }}
               >
-                Upload File
+                Unggah Berkas
               </button>
               <button
                 type="button"
@@ -380,7 +381,7 @@ function AdminArticleFormPage() {
                   fontWeight: thumbnailMode === 'url' ? 500 : 400
                 }}
               >
-                URL Link
+                Tautan URL
               </button>
             </div>
 
@@ -432,7 +433,7 @@ function AdminArticleFormPage() {
                     >
                       <img 
                         src={filePreview} 
-                        alt="Preview"
+                        alt="Pratinjau"
                         className="w-full max-h-64 object-cover"
                       />
                     </div>
@@ -453,7 +454,7 @@ function AdminArticleFormPage() {
                           border: '1px solid rgba(248, 81, 73, 0.3)'
                         }}
                       >
-                        Ganti file
+                        Ganti berkas
                       </button>
                     </div>
                   </div>
@@ -532,7 +533,7 @@ function AdminArticleFormPage() {
                 border: '1px solid var(--border-subtle)'
               }}
             >
-              {saving ? 'Menyimpan...' : 'Simpan Draft'}
+              {saving ? 'Menyimpan...' : 'Simpan Draf'}
             </button>
             <button
               onClick={() => handleSave('published')}
@@ -545,7 +546,7 @@ function AdminArticleFormPage() {
               onMouseEnter={(e) => !saving && (e.currentTarget.style.backgroundColor = 'var(--accent-hover)')}
               onMouseLeave={(e) => !saving && (e.currentTarget.style.backgroundColor = 'var(--accent)')}
             >
-              {saving ? 'Menyimpan...' : (isEditMode ? 'Simpan & Publish' : 'Publish Sekarang')}
+              {saving ? 'Menyimpan...' : (isEditMode ? 'Simpan & Terbitkan' : 'Terbitkan Sekarang')}
             </button>
           </div>
         </div>

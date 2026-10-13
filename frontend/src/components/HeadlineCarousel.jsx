@@ -1,3 +1,5 @@
+import SpeakTitleButton from './SpeakTitleButton';
+
 // Carousel "Berita Terbaru". Dipakai dua ukuran di beranda:
 // - besar=false : setengah lebar, mendampingi logo & tagline (pengunjung tamu)
 // - besar=true  : selebar halaman sebagai headline utama (user yang sudah login)
@@ -59,6 +61,11 @@ function HeadlineCarousel({ articles, index, onIndexChange, onArticleClick, besa
           style={{
             background: 'linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.45) 45%, rgba(0,0,0,0.1) 100%)'
           }}
+        />
+
+        <SpeakTitleButton
+          title={article.judul}
+          className="absolute top-4 right-4 z-10 md:top-5 md:right-5"
         />
 
         <div

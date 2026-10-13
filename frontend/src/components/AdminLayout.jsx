@@ -1,5 +1,6 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import ChevronLeftIcon from './ChevronLeftIcon';
 
 function AdminLayout({ children }) {
   const location = useLocation();
@@ -12,7 +13,7 @@ function AdminLayout({ children }) {
   };
 
   const menuItems = [
-    { path: '/admin/dashboard', label: 'Overview' },
+    { path: '/admin/dashboard', label: 'Ringkasan' },
     { path: '/admin/articles', label: 'Artikel' },
     { path: '/admin/categories', label: 'Kategori' }
   ];
@@ -51,7 +52,7 @@ function AdminLayout({ children }) {
             className="text-xs uppercase tracking-[0.2em] font-medium mt-1 block"
             style={{ color: 'var(--accent)' }}
           >
-            Admin Panel
+            Panel Admin
           </span>
         </div>
 
@@ -102,7 +103,7 @@ function AdminLayout({ children }) {
             className="text-xs uppercase tracking-widest font-medium mb-1"
             style={{ color: 'var(--text-tertiary)' }}
           >
-            Login sebagai
+            Masuk sebagai
           </p>
           <p 
             className="text-sm font-medium mb-3"
@@ -112,12 +113,12 @@ function AdminLayout({ children }) {
           </p>
           <button
             onClick={handleLogout}
-            className="w-full text-left text-sm transition py-1"
+            className="w-full text-left text-sm transition py-1 inline-flex items-center gap-2"
             style={{ color: 'var(--danger)' }}
             onMouseEnter={(e) => e.currentTarget.style.opacity = '0.7'}
             onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
           >
-            ← Keluar
+            <><ChevronLeftIcon /> Keluar</>
           </button>
         </div>
       </aside>

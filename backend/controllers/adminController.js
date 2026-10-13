@@ -8,7 +8,7 @@ const loginAdmin = async (req, res) => {
 
     if (!username || !password) {
       return res.status(400).json({ 
-        message: 'Username dan password wajib diisi' 
+        message: 'Nama pengguna dan kata sandi wajib diisi' 
       });
     }
 
@@ -18,7 +18,7 @@ const loginAdmin = async (req, res) => {
 
     if (!admin) {
       return res.status(401).json({ 
-        message: 'Username atau password salah' 
+        message: 'Nama pengguna atau kata sandi salah' 
       });
     }
 
@@ -26,7 +26,7 @@ const loginAdmin = async (req, res) => {
 
     if (!passwordMatch) {
       return res.status(401).json({ 
-        message: 'Username atau password salah' 
+        message: 'Nama pengguna atau kata sandi salah' 
       });
     }
 

@@ -1,3 +1,5 @@
+import SpeakTitleButton from './SpeakTitleButton';
+
 // Kartu berita yang dipakai bersama oleh grid "Kategori" dan baris geser
 // "Rekomendasi" di beranda. `className` untuk penyesuaian per tempat,
 // misalnya lebar tetap saat dipakai di dalam baris geser.
@@ -42,6 +44,11 @@ function ArticleCard({ article, onClick, className = '' }) {
         >
           {article.category?.nama}
         </span>
+
+        <SpeakTitleButton
+          title={article.judul}
+          className="absolute top-3 right-3"
+        />
       </div>
 
       <div className="flex flex-col flex-1 p-5">

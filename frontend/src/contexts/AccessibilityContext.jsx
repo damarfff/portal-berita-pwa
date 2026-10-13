@@ -19,6 +19,7 @@ const DEFAULT_PREFERENCES = {
 };
 
 const STORAGE_KEY = 'accessibilityPreferences';
+const VISITOR_STORAGE_KEY = 'visitorAccessibilityPreferences';
 
 // localStorage di sini cuma dipakai sebagai cache SELAMA user yang
 // bersangkutan masih login — supaya saat berpindah halaman (atau refresh)
@@ -36,9 +37,27 @@ const loadStoredPreferences = () => {
   }
 };
 
+const loadVisitorPreferences = () => {
+  try {
+    const raw = sessionStorage.getItem(VISITOR_STORAGE_KEY);
+    if (!raw) return DEFAULT_PREFERENCES;
+    return { ...DEFAULT_PREFERENCES, ...JSON.parse(raw) };
+  } catch {
+    return DEFAULT_PREFERENCES;
+  }
+};
+
 const persistPreferences = (prefs) => {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
+  } catch {
+    // abaikan (mis. mode private/storage penuh)
+  }
+};
+
+const persistVisitorPreferences = (prefs) => {
+  try {
+    sessionStorage.setItem(VISITOR_STORAGE_KEY, JSON.stringify(prefs));
   } catch {
     // abaikan (mis. mode private/storage penuh)
   }
@@ -52,6 +71,14 @@ const clearStoredPreferences = () => {
   }
 };
 
+const clearVisitorPreferences = () => {
+  try {
+    sessionStorage.removeItem(VISITOR_STORAGE_KEY);
+  } catch {
+    // abaikan (mis. mode private/storage penuh)
+  }
+};
+
 const normalizePreferences = (prefs) => ({
   ukuranTeks: prefs.ukuranTeks || 'medium',
   modeKontras: prefs.modeKontras || 'dark',
@@ -62,12 +89,15 @@ const normalizePreferences = (prefs) => ({
 });
 
 export const AccessibilityProvider = ({ children }) => {
-  const { isLoggedIn, isUser } = useAuth();
-  // Inisialisasi berdasarkan status login SAAT MOUNT: kalau memang lagi
-  // login sebagai user, pakai cache lokal (hindari kedip) sambil menunggu
-  // fetch; kalau tidak, langsung default.
+  const { isLoggedIn, isUser, isGuest } = useAuth();
+  // Inisialisasi berdasarkan status login SAAT MOUNT: user memakai cache
+  // lokal, sedangkan pengunjung memakai cache sesi sementara.
   const [preferences, setPreferences] = useState(() =>
-    isLoggedIn && isUser ? loadStoredPreferences() : DEFAULT_PREFERENCES
+    isLoggedIn && isUser
+      ? loadStoredPreferences()
+      : isLoggedIn && isGuest
+        ? loadVisitorPreferences()
+        : DEFAULT_PREFERENCES
   );
   const [loading, setLoading] = useState(false);
 
@@ -97,12 +127,16 @@ export const AccessibilityProvider = ({ children }) => {
         } finally {
           if (!cancelled) setLoading(false);
         }
+      } else if (isLoggedIn && isGuest) {
+        setPreferences(loadVisitorPreferences());
+        setLoading(false);
       } else {
         // Belum login, logout, atau login sebagai admin: kembali ke default
-        // dan buang cache lokal, supaya mode buta warna/kontras user
-        // sebelumnya tidak nempel di halaman publik seperti Login.
+        // dan buang cache lokal/sementara agar preferensi tidak menempel ke
+        // halaman publik atau pengunjung berikutnya.
         setPreferences(DEFAULT_PREFERENCES);
         clearStoredPreferences();
+        clearVisitorPreferences();
       }
     };
 
@@ -111,7 +145,7 @@ export const AccessibilityProvider = ({ children }) => {
     return () => {
       cancelled = true;
     };
-  }, [isLoggedIn, isUser]);
+  }, [isLoggedIn, isUser, isGuest]);
 
   // Tema dipasang sebagai atribut di <html>, bukan style inline di komponen:
   // token warnanya perlu terbaca juga oleh body, scrollbar, dan elemen
@@ -122,6 +156,16 @@ export const AccessibilityProvider = ({ children }) => {
   }, [pratinjauKontras, preferences.modeKontras]);
 
   const updatePrefs = async (newPrefs) => {
+    if (isGuest) {
+      // Panel aksesibilitas mengirim perubahan satu field saja. Gabungkan
+      // dulu dengan preferensi yang sedang aktif agar, misalnya, memilih
+      // mode buta warna tidak mengembalikan kontras terang ke default gelap.
+      const normalized = normalizePreferences({ ...preferences, ...newPrefs });
+      setPreferences(normalized);
+      persistVisitorPreferences(normalized);
+      return normalized;
+    }
+
     try {
       const updated = await updatePreferences(newPrefs);
       const normalized = normalizePreferences(updated);

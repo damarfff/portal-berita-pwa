@@ -2,11 +2,12 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getCategories } from '../services/articleService';
 import { getCategoryPreferences, updateCategoryPreferences } from '../services/preferenceService';
-import { setFirstLoginDone } from '../services/authService';
+import { setFirstLoginDone, setVisitorSetupDone } from '../services/authService';
 import { speak, stop } from '../services/ttsService';
 import { useAccessibility } from '../hooks/useAccessibility';
 import { useAuth } from '../hooks/useAuth';
 import ArticlePreview from '../components/ArticlePreview';
+import { getColorBlindFilter } from '../utils/accessibilityStyles';
 
 const OPSI_UKURAN_TEKS = [
   { value: 'small', label: 'Kecil' },
@@ -206,7 +207,7 @@ function KotakError({ pesan }) {
 function SetupPreferencesPage() {
   const navigate = useNavigate();
   const { preferences: savedPreferences, updatePrefs, setPratinjauKontras } = useAccessibility();
-  const { user, login } = useAuth();
+  const { user, isUser, isGuest, login } = useAuth();
 
   // Halaman ini dipakai dua kali: sebagai setup awal sesudah mendaftar, dan
   // sebagai halaman ubah preferensi lewat nama akun di navbar.
@@ -259,9 +260,12 @@ function SetupPreferencesPage() {
         // ditandai terpilih. Tanpa ini, user yang membuka halaman ini untuk
         // mengubah favoritnya akan melihat pilihan kosong — dan menyimpan
         // akan menghapus seluruh favorit lamanya.
+        const favoritPromise = isUser
+          ? getCategoryPreferences().catch(() => [])
+          : Promise.resolve([]);
         const [cats, favorit] = await Promise.all([
           getCategories(),
-          getCategoryPreferences().catch(() => [])
+          favoritPromise
         ]);
         setCategories(cats);
         setSelectedCategoryIds(favorit.map(c => c.id));
@@ -270,7 +274,7 @@ function SetupPreferencesPage() {
       }
     };
     loadCategories();
-  }, []);
+  }, [isUser]);
 
   useEffect(() => {
     return () => {
@@ -338,11 +342,18 @@ function SetupPreferencesPage() {
       stop();
       setIsPreviewPlaying(false);
       await updatePrefs(preferences);
-      await updateCategoryPreferences(selectedCategoryIds);
+      if (!isGuest) {
+        await updateCategoryPreferences(selectedCategoryIds);
+      }
 
       if (isSetupAwal) {
-        const updated = setFirstLoginDone();
-        if (updated) login(updated, 'user');
+        if (isUser) {
+          const updated = setFirstLoginDone();
+          if (updated) login(updated, 'user');
+        } else if (isGuest) {
+          const updated = setVisitorSetupDone();
+          if (updated) login(updated, 'visitor');
+        }
       }
 
       navigate('/');
@@ -461,6 +472,7 @@ function SetupPreferencesPage() {
   const labelTombolSimpan = saving
     ? 'Menyimpan...'
     : isSetupAwal ? 'Simpan dan Mulai Membaca' : 'Simpan Perubahan';
+  const filterWarnaPratinjau = getColorBlindFilter(preferences.modeButaWarna);
 
   return (
     <>
@@ -487,7 +499,10 @@ function SetupPreferencesPage() {
 
         {/* Segmen progres sekaligus jadi jalan pintas: user yang ingin mengubah
             jawaban sebelumnya tidak harus menekan panah kiri berkali-kali. */}
-        <div className="flex gap-1.5 mt-2.5 mb-4">
+        <div
+          className="flex gap-1.5 mt-2.5 mb-4"
+          style={{ filter: filterWarnaPratinjau }}
+        >
           {langkah.map((l, i) => (
             <button
               key={l.id}
@@ -513,7 +528,8 @@ function SetupPreferencesPage() {
             className="p-5"
             style={{
               backgroundColor: 'var(--bg-secondary)',
-              borderTop: '1px solid var(--border-subtle)'
+              borderTop: '1px solid var(--border-subtle)',
+              filter: filterWarnaPratinjau
             }}
           >
             <SectionLabel description={langkahAktif.deskripsi}>
@@ -654,7 +670,10 @@ function SetupPreferencesPage() {
             </p>
           </div>
 
-          <div className="space-y-6 lg:order-2 animate-fade-in-delay-2">
+          <div
+            className="space-y-6 lg:order-2 animate-fade-in-delay-2"
+            style={{ filter: filterWarnaPratinjau }}
+          >
             <div className="rounded-lg p-6" style={cardStyle}>
               <SectionLabel description="Pilih ukuran teks yang nyaman dibaca">
                 Ukuran Teks

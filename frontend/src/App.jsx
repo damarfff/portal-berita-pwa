@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -6,8 +6,10 @@ import ProtectedRoute from './components/ProtectedRoute';
 import ColorBlindFilters from './components/ColorBlindFilters';
 import PWAUpdatePrompt from './components/PWAUpdatePrompt';
 import AccessibilityPanel from './components/AccessibilityPanel';
+import WebsiteGuideModal from './components/WebsiteGuideModal';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 import RegisterPage from './pages/RegisterPage';
 import AdminLoginPage from './pages/AdminLoginPage';
 import SetupPreferencesPage from './pages/SetupPreferencesPage';
@@ -36,7 +38,7 @@ function NotFoundOrOffline() {
           className="text-xs uppercase tracking-[0.3em] font-medium"
           style={{ color: 'var(--accent)' }}
         >
-          Error 404
+          Kesalahan 404
         </span>
         <h1 
           className="font-bold tracking-tight text-5xl mt-3 mb-4"
@@ -66,9 +68,10 @@ function NotFoundOrOffline() {
 }
 
 function AppContent() {
-  const { isAdmin, isLoggedIn, isUser } = useAuth();
+  const { isAdmin, isLoggedIn, isUser, isGuest } = useAuth();
   const location = useLocation();
   const [a11yPanelOpen, setA11yPanelOpen] = useState(false);
+  const [panduanDitutup, setPanduanDitutup] = useState(false);
 
   // Halaman setup-preferensi menyembunyikan panel aksesibilitas melayang
   // (wizard-nya sudah mengatur hal yang sama) dan footernya di layar kecil.
@@ -76,9 +79,17 @@ function AppContent() {
 
   // Footer tidak ditampilkan di halaman Login/Register (layout dua kolom
   // yang sudah dirancang penuh satu layar) maupun halaman admin.
-  const hideFooter = isAdmin || ['/login', '/register'].includes(location.pathname);
+  const hideFooter = isAdmin || ['/login', '/register', '/reset-password'].includes(location.pathname);
 
   const isHome = location.pathname === '/';
+
+  // Status ini hanya disimpan selama aplikasi sedang terbuka. Setelah
+  // browser melakukan refresh, state kembali ke awal dan panduan tampil lagi.
+  const panduanTerbuka = isHome && !panduanDitutup;
+
+  const tutupPanduan = useCallback(() => {
+    setPanduanDitutup(true);
+  }, []);
 
   // Filter buta warna dipasang per elemen (lihat useFilterWarna), bukan di
   // satu pembungkus: navbar sticky, baris yang bisa digeser, dan elemen fixed
@@ -111,6 +122,7 @@ function AppContent() {
               seperti baru dibuka (filter/kategori/carousel/scroll ter-reset). */}
           <Route path="/" element={<HomePage key={location.key} />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/admin/login" element={<AdminLoginPage />} />
           <Route path="/offline" element={<OfflinePage />} />
@@ -118,7 +130,7 @@ function AppContent() {
           <Route 
             path="/article/:slug" 
             element={
-              <ProtectedRoute requiredRole="user">
+              <ProtectedRoute requiredRoles={['user', 'visitor']}>
                 <ArticleDetailPage />
               </ProtectedRoute>
             } 
@@ -127,7 +139,7 @@ function AppContent() {
           <Route 
             path="/setup-preferences" 
             element={
-              <ProtectedRoute requiredRole="user">
+              <ProtectedRoute requiredRoles={['user', 'visitor']}>
                 <SetupPreferencesPage />
               </ProtectedRoute>
             } 
@@ -197,7 +209,7 @@ function AppContent() {
         position: fixed ini tetap menempel ke viewport — CSS `filter` pada
         elemen leluhur membuat leluhur itu jadi containing block baru untuk
         anak fixed-nya, jadi harus dihindari untuk tombol/panel/toast ini. */}
-    {isLoggedIn && isUser && !isSetupPreferences && (
+    {isLoggedIn && (isUser || isGuest) && !isSetupPreferences && (
       <>
         <button
           onClick={() => setA11yPanelOpen(true)}
@@ -236,6 +248,7 @@ function AppContent() {
     )}
 
     <PWAUpdatePrompt />
+    {isHome && panduanTerbuka && <WebsiteGuideModal onClose={tutupPanduan} />}
     </>
   );
 }

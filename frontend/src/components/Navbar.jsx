@@ -54,7 +54,7 @@ const MENU = [
 ];
 
 function Navbar() {
-  const { isLoggedIn, isAdmin, isUser, user, logout } = useAuth();
+  const { isLoggedIn, isAdmin, isUser, isGuest, user, logout } = useAuth();
   const { preferences } = useAccessibility();
   const filterWarna = useFilterWarna();
   const navigate = useNavigate();
@@ -215,13 +215,15 @@ function Navbar() {
                   kategori favorit bisa diubah kapan saja, tidak hanya saat
                   setup awal. Admin tidak diberi tautan karena halaman itu
                   khusus peran user. */}
-              {isUser ? (
+              {isUser || isGuest ? (
                 <Link
                   to="/setup-preferences"
                   className="text-sm transition inline-flex items-center"
                   style={{ color: 'var(--text-tertiary)' }}
-                  title="Atur preferensi & kategori favorit"
-                  aria-label={`Preferensi akun ${user?.nama || user?.username || ''}`}
+                  title={isGuest ? 'Coba fitur aksesibilitas' : 'Atur preferensi & kategori favorit'}
+                  aria-label={isGuest
+                    ? 'Coba fitur aksesibilitas'
+                    : `Preferensi akun ${user?.nama || user?.username || ''}`}
                   onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--accent)'; }}
                   onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-tertiary)'; }}
                 >

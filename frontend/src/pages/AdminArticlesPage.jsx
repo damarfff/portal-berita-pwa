@@ -123,8 +123,8 @@ useEffect(() => {
         <div className="flex gap-2 mb-6 animate-fade-in-delay-1">
           {[
             { value: 'all', label: 'Semua' },
-            { value: 'published', label: 'Published' },
-            { value: 'draft', label: 'Draft' }
+            { value: 'published', label: 'Diterbitkan' },
+            { value: 'draft', label: 'Draf' }
           ].map(option => (
             <button
               key={option.value}
@@ -238,7 +238,7 @@ useEffect(() => {
                             : 'var(--warning)'
                         }}
                       >
-                        {article.status === 'published' ? 'Published' : 'Draft'}
+                        {article.status === 'published' ? 'Diterbitkan' : 'Draf'}
                       </span>
                     </td>
                     <td 
@@ -264,7 +264,7 @@ useEffect(() => {
                               border: '1px solid rgba(63, 185, 80, 0.3)'
                             }}
                           >
-                            Publish
+                            Terbitkan
                           </button>
                         )}
                         <button
@@ -276,7 +276,7 @@ useEffect(() => {
                             border: '1px solid var(--border-subtle)'
                           }}
                         >
-                          Edit
+                          Ubah
                         </button>
                         <button
                           onClick={() => handleDelete(article.id, article.judul)}

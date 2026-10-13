@@ -6,6 +6,7 @@ import { speak, stop, pause, resume, getIsPaused, isTTSSupported } from '../serv
 import { useAccessibility } from '../hooks/useAccessibility';
 import { useAuth } from '../hooks/useAuth';
 import { useFilterWarna } from '../hooks/useFilterWarna';
+import ChevronLeftIcon from '../components/ChevronLeftIcon';
 import {
   getTextSizeClass,
   getLineSpacingClass
@@ -304,10 +305,10 @@ function ArticleDetailPage() {
         </div>
         <Link 
           to="/" 
-          className="text-sm hover:underline"
+          className="text-sm hover:underline inline-flex items-center gap-2"
           style={{ color: 'var(--accent)' }}
         >
-          ← Kembali ke beranda
+          <><ChevronLeftIcon /> Kembali ke beranda</>
         </Link>
       </div>
     );
@@ -351,10 +352,10 @@ function ArticleDetailPage() {
       <article className="max-w-3xl mx-auto px-6 py-12">
           <Link 
             to="/" 
-            className="text-sm hover:underline inline-block mb-10"
+            className="text-sm hover:underline inline-flex items-center gap-2 mb-10"
             style={{ color: accentColor }}
           >
-            ← Kembali ke beranda
+            <><ChevronLeftIcon /> Kembali ke beranda</>
           </Link>
 
           <header className="mb-10">

@@ -1,5 +1,48 @@
 import api from './api';
 
+const VISITOR_SESSION_KEY = 'visitorSession';
+
+const simpanSesiPengunjung = (visitor) => {
+  try {
+    sessionStorage.setItem(VISITOR_SESSION_KEY, JSON.stringify(visitor));
+  } catch {
+    // abaikan (mis. mode private/storage penuh)
+  }
+};
+
+export const loginAsVisitor = () => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  localStorage.removeItem('role');
+
+  const visitor = {
+    id: 'visitor',
+    nama: 'Pengunjung',
+    isFirstLogin: true
+  };
+  simpanSesiPengunjung(visitor);
+  return visitor;
+};
+
+export const getVisitorUser = () => {
+  try {
+    const raw = sessionStorage.getItem(VISITOR_SESSION_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+};
+
+export const isVisitorAuthenticated = () => !!getVisitorUser();
+
+export const setVisitorSetupDone = () => {
+  const visitor = getVisitorUser();
+  if (!visitor) return null;
+  const updated = { ...visitor, isFirstLogin: false };
+  simpanSesiPengunjung(updated);
+  return updated;
+};
+
 export const registerUser = async (email, password, nama) => {
   const response = await api.post('/auth/register', {
     email,
@@ -24,6 +67,14 @@ export const loginUser = async (email, password) => {
   return response.data;
 };
 
+export const resetPassword = async (email, newPassword) => {
+  const response = await api.post('/auth/reset-password', {
+    email,
+    newPassword
+  });
+  return response.data;
+};
+
 export const loginAdmin = async (username, password) => {
   const response = await api.post('/admin/login', {
     username,
@@ -43,6 +94,12 @@ export const logout = () => {
   localStorage.removeItem('token');
   localStorage.removeItem('user');
   localStorage.removeItem('role');
+  try {
+    sessionStorage.removeItem(VISITOR_SESSION_KEY);
+    sessionStorage.removeItem('visitorAccessibilityPreferences');
+  } catch {
+    // abaikan (mis. mode private/storage penuh)
+  }
 };
 
 // Dipanggil setelah user menyimpan preferensi awal. Data user di

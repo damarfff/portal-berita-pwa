@@ -8,13 +8,13 @@ const register = async (req, res) => {
 
     if (!email || !password || !nama) {
       return res.status(400).json({ 
-        message: 'Email, password, dan nama wajib diisi' 
+        message: 'Email, kata sandi, dan nama wajib diisi' 
       });
     }
 
     if (password.length < 6) {
       return res.status(400).json({ 
-        message: 'Password minimal 6 karakter' 
+        message: 'Kata sandi minimal 6 karakter' 
       });
     }
 
@@ -64,7 +64,7 @@ const login = async (req, res) => {
 
     if (!email || !password) {
       return res.status(400).json({ 
-        message: 'Email dan password wajib diisi' 
+        message: 'Email dan kata sandi wajib diisi' 
       });
     }
 
@@ -74,7 +74,7 @@ const login = async (req, res) => {
 
     if (!user) {
       return res.status(401).json({ 
-        message: 'Email atau password salah' 
+        message: 'Email atau kata sandi salah' 
       });
     }
 
@@ -82,7 +82,7 @@ const login = async (req, res) => {
 
     if (!passwordMatch) {
       return res.status(401).json({ 
-        message: 'Email atau password salah' 
+        message: 'Email atau kata sandi salah' 
       });
     }
 
@@ -111,6 +111,50 @@ const login = async (req, res) => {
     console.error('Login error:', error);
     res.status(500).json({ 
       message: 'Terjadi kesalahan pada server' 
+    });
+  }
+};
+
+const resetPassword = async (req, res) => {
+  try {
+    const { email, newPassword } = req.body;
+
+    if (!email || !newPassword) {
+      return res.status(400).json({
+        message: 'Email dan kata sandi baru wajib diisi'
+      });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({
+        message: 'Kata sandi minimal 6 karakter'
+      });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email: email.trim() }
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        message: 'Email tidak ditemukan'
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { password: hashedPassword }
+    });
+
+    res.json({
+      message: 'Kata sandi berhasil diatur ulang'
+    });
+  } catch (error) {
+    console.error('Kesalahan pengaturan ulang kata sandi:', error);
+    res.status(500).json({
+      message: 'Terjadi kesalahan pada server'
     });
   }
 };
@@ -149,4 +193,4 @@ const getProfile = async (req, res) => {
   }
 };
 
-module.exports = { register, login, getProfile };
+module.exports = { register, login, resetPassword, getProfile };

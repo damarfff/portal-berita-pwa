@@ -86,13 +86,13 @@ function AdminDashboardPage() {
             className="text-xs uppercase tracking-[0.3em] font-medium"
             style={{ color: 'var(--accent)' }}
           >
-            Editorial Pulse
+              Sorotan Editorial
           </span>
           <h1 
  className="font-bold tracking-tight text-5xl mt-3 mb-3"
             style={{ color: 'var(--text-primary)' }}
           >
-            Overview
+            Ringkasan
           </h1>
           <p 
             className="text-base"
@@ -104,8 +104,8 @@ function AdminDashboardPage() {
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12 animate-fade-in-delay-1">
           <StatCard label="Total Artikel" value={stats.totalArticles} />
-          <StatCard label="Published" value={stats.publishedArticles} accent />
-          <StatCard label="Draft" value={stats.draftArticles} />
+          <StatCard label="Diterbitkan" value={stats.publishedArticles} accent />
+          <StatCard label="Draf" value={stats.draftArticles} />
           <StatCard label="Kategori" value={stats.totalCategories} />
         </div>
 
@@ -202,7 +202,7 @@ function AdminDashboardPage() {
                         : 'var(--warning)'
                     }}
                   >
-                    {article.status === 'published' ? 'Published' : 'Draft'}
+                    {article.status === 'published' ? 'Diterbitkan' : 'Draf'}
                   </span>
                 </div>
               ))}
