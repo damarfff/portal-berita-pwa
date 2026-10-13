@@ -9,7 +9,7 @@ const TEKS_PANDUAN = 'Selamat datang di Aksa. Portal berita yang dirancang agar 
 function WebsiteGuideModal({ onClose }) {
   const filterWarna = useFilterWarna();
   const { preferences } = useAccessibility();
-  const [suaraBerjalan, setSuaraBerjalan] = useState(true);
+  const [suaraBerjalan, setSuaraBerjalan] = useState(false);
   const [suaraTerjeda, setSuaraTerjeda] = useState(false);
 
   const mulaiBaca = useCallback(() => {
@@ -37,34 +37,6 @@ function WebsiteGuideModal({ onClose }) {
   }, [preferences.volumeTts]);
 
   useEffect(() => {
-    let sudahMulai = false;
-    let timer;
-
-    const mulaiSetelahVoiceSiap = () => {
-      if (sudahMulai) return;
-      sudahMulai = true;
-      window.speechSynthesis?.removeEventListener('voiceschanged', mulaiSetelahVoiceSiap);
-      mulaiBaca();
-    };
-
-    const voiceSudahSiap = 'speechSynthesis' in window
-      && window.speechSynthesis.getVoices().length > 0;
-
-    if (!voiceSudahSiap && 'speechSynthesis' in window) {
-      window.speechSynthesis.addEventListener('voiceschanged', mulaiSetelahVoiceSiap);
-    }
-
-    // Beri waktu browser menyiapkan voice sebelum pemanggilan pertama.
-    timer = window.setTimeout(mulaiSetelahVoiceSiap, voiceSudahSiap ? 250 : 1000);
-
-    return () => {
-      window.clearTimeout(timer);
-      window.speechSynthesis?.removeEventListener('voiceschanged', mulaiSetelahVoiceSiap);
-      stop();
-    };
-  }, [mulaiBaca]);
-
-  useEffect(() => {
     const handleEscape = (event) => {
       if (event.key === 'Escape') onClose();
     };
@@ -78,6 +50,8 @@ function WebsiteGuideModal({ onClose }) {
       window.removeEventListener('keydown', handleEscape);
     };
   }, [onClose]);
+
+  useEffect(() => () => stop(), []);
 
   const togglePembacaan = (event) => {
     event.stopPropagation();
@@ -214,7 +188,7 @@ function WebsiteGuideModal({ onClose }) {
                   ? 'Pembacaan suara sedang aktif'
                   : suaraTerjeda
                     ? 'Klik untuk melanjutkan pembacaan suara'
-                    : 'Klik untuk coba pembacaan suara'}
+                    : 'Klik untuk mulai pembacaan suara'}
               </span>
             </div>
 
